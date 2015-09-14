@@ -1,0 +1,20 @@
+discourse:
+  build: build/discourse
+  container_name: discourse
+  environment:
+    DISCOURSE_DB_HOST: 172.17.0.2
+    DISCOURSE_REDIS_HOST: 172.17.0.8
+    DISCOURSE_DB_USERNAME: postgres
+    RAILS_ENV: production
+  ports:
+    - "80:80"
+  command: /usr/sbin/nginx
+
+sidekiq:
+  image: discourse
+  environment:
+    DISCOURSE_DB_HOST: 172.17.0.2
+    DISCOURSE_REDIS_HOST: 172.17.0.8
+    DISCOURSE_DB_USERNAME: postgres
+    RAILS_ENV: production
+  command: bundle exec sidekiq
