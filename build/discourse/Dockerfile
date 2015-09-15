@@ -7,22 +7,18 @@ env RAILS_ENV production
 env RUBY_GC_MALLOC_LIMIT 90000000
 
 # Set env variables required to compile assets
-env DISCOURSE_DB_HOST    postgres
-env DISCOURSE_REDIS_HOST redis
+env DISCOURSE_DB_HOST     postgres
+env DISCOURSE_REDIS_HOST  redis
 env DISCOURSE_DB_USERNAME postgres
 
 RUN \
   apt-get update && \
-  apt-get -y install nodejs build-essential curl unzip
+  apt-get -y install nodejs build-essential git-core
 
 # Download discourse
 RUN \
   cd /tmp && \
-  curl -sSL "https://github.com/discourse/discourse/archive/latest-release.zip" -o discourse.zip && \
-  unzip discourse.zip -d /srv && \
-  mv /srv/discourse-latest-release /srv/discourse &&\
-  rm -f discourse.zip && \
-  echo "unzip completed"
+  git clone git@github.com:discourse/discourse.git /srv/discourse
 
 WORKDIR /srv/discourse
 
@@ -58,13 +54,17 @@ RUN \
 ADD discourse.conf /etc/nginx/sites-enabled/discourse.conf
 ADD discourse-env.conf /etc/nginx/main.d/discourse-env.conf
 
+CMD ["/sbin/my_init"]
+
 EXPOSE 80
 
 VOLUME "/srv/discourse/public/uploads"
-VOLUME "/srv/discourse/logs"
 
 RUN \
-  apt-get install jhead optipng gifsicle libjpeg-turbo-progs
+  apt-get install -y advancecomp jhead jpegoptim libjpeg-progs optipng pngcrush pngquant ghostscript
+
+RUN \
+  npm install -g svgo gifsicle
 
 RUN \
   apt-get clean
@@ -73,4 +73,3 @@ RUN \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN rm -f /etc/service/nginx/down
-
