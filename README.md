@@ -2,6 +2,7 @@ This repo is for building or starting Discourse images. Image is based on Ruby 2
 All actions are performed within the repo folder.
 
 `git@github.com:pachkovsky/discourse-docker.git`
+
 `cd discourse-docker`
 
 # Building image
@@ -12,8 +13,10 @@ You need to have running Postgres and Redis servers to build Discourse image
 
 Get IP address of Redis and Postgres
 
-`docker inspect --format '{{ .NetworkSettings.IPAddress }}' build_postgres`
-`docker inspect --format '{{ .NetworkSettings.IPAddress }}' build_redis`
+```bash
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' build_postgres
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' build_redis
+```
 
 And replace `postgres` and `redis` with exact values in build/discourse/Dockerfile
 
@@ -28,15 +31,19 @@ Now build the image
 
 Push it to your Docker registry, e.g:
 
-`docker tag discourse pachkovskij/discourse`
-`docker push pachkovskij/discourse`
+```bash
+docker tag discourse pachkovskij/discourse
+docker push pachkovskij/discourse
+```
 
 Clean up
 
-`docker-compose -f build-dependencies.yml stop`
-`docker-compose -f build-dependencies.yml rm`
+```bash
+docker-compose -f build-dependencies.yml stop
+docker-compose -f build-dependencies.yml rm
+```
 
-# Standalone Forum
+# All-in-one
 
 Copy .env.sample
 `cp .env.sample .env`
@@ -44,6 +51,7 @@ Copy .env.sample
 Edit it but leave `DISCOURSE_DB_HOST=postgres` `DISCOURSE_REDIS_HOST=redis` as is
 
 And run
+
 `docker-compose up -d`
 
 Done.
@@ -51,6 +59,7 @@ Done.
 # Forum-only
 
 Copy .env.sample
+
 `cp .env.sample .env`
 
 Edit everything you need.
