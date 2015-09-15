@@ -18,7 +18,7 @@ RUN \
 # Download discourse
 RUN \
   cd /tmp && \
-  git clone git@github.com:discourse/discourse.git /srv/discourse
+  git clone https://github.com/discourse/discourse.git /srv/discourse
 
 WORKDIR /srv/discourse
 

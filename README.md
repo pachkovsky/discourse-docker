@@ -2,7 +2,7 @@ This repo is for building or starting Discourse image. Image is based on Ruby 2.
 All actions are performed within the repo folder.
 
 ```bash
-git@github.com:pachkovsky/discourse-docker.git
+git clone git@github.com:pachkovsky/discourse-docker.git
 cd discourse-docker
 ```
 
