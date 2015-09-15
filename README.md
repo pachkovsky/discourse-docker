@@ -25,7 +25,7 @@ And replace `postgres` and `redis` with exact values in `build/discourse/Dockerf
 
 ```bash
 env DISCOURSE_DB_HOST    postgres
-env DISCOURSE_REDIS_HOST redist
+env DISCOURSE_REDIS_HOST redis
 ```
 
 Now build the image
@@ -50,7 +50,7 @@ docker-compose -f build-dependencies.yml rm
 
 # All-in-one
 
-Copy and edit`.env.sample`
+Copy and edit `.env.sample`
 
 ```bash
 cp .env.sample .env
@@ -62,6 +62,11 @@ Run Discourse:
 
 ```bash
 docker-compose up -d
+```
+
+Create and migrate database
+```
+docker exec discourse-web bundle exec rake db:create db:migrate
 ```
 
 Done.
@@ -80,6 +85,11 @@ Run Discourse:
 
 ```bash
 docker-compose -f standalone.yml up -d
+```
+
+Create and migrate database
+```
+docker exec discourse-web bundle exec rake db:create db:migrate
 ```
 
 Done.

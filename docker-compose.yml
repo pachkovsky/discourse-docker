@@ -1,28 +1,23 @@
 discourse:
-  image: discoursedocker_discourse
+  image: discourse
+  container_name: discourse-web
   env_file:
     - .env
   ports:
     - "8081:80"
-  command: /usr/sbin/nginx
-  links:
-    - redis
-    - postgres
+  external_links:
+    - build_redis
+    - build_postgres
   restart: always
 
 sidekiq:
-  image: discoursedocker_discourse
+  image: discourse
+  container_name: discourse-sidekiq
   env_file:
     - .env
   command: bundle exec sidekiq
-  links:
-    - redis
-    - postgres
+  external_links:
+    - build_redis
+    - build_postgres
   volumes_from:
     - discourse
-
-redis:
-  image: redis
-
-postgres:
-  image: postgres

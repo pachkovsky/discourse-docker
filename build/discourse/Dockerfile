@@ -7,8 +7,8 @@ env RAILS_ENV production
 env RUBY_GC_MALLOC_LIMIT 90000000
 
 # Set env variables required to compile assets
-env DISCOURSE_DB_HOST    172.17.1.29
-env DISCOURSE_REDIS_HOST 172.17.1.30
+env DISCOURSE_DB_HOST    postgres
+env DISCOURSE_REDIS_HOST redis
 env DISCOURSE_DB_USERNAME postgres
 
 RUN \
@@ -63,10 +63,14 @@ EXPOSE 80
 VOLUME "/srv/discourse/public/uploads"
 VOLUME "/srv/discourse/logs"
 
-USER www-data
+RUN \
+  apt-get install jhead optipng gifsicle libjpeg-turbo-progs
 
 RUN \
   apt-get clean
 
 RUN \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN rm -f /etc/service/nginx/down
+
