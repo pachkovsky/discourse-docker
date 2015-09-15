@@ -1,27 +1,30 @@
-FROM ubuntu:14.04
+FROM phusion/passenger-ruby22
+
+RUN \
+  ifconfig
+
+env RAILS_ENV production
+env RUBY_GC_MALLOC_LIMIT 90000000
 
 # Set env variables required to compile assets
-env DISCOURSE_DB_HOST
-env DISCOURSE_REDIS_HOST
-env DISCOURSE_DB_USERNAME
+env DISCOURSE_DB_HOST    172.17.1.29
+env DISCOURSE_REDIS_HOST 172.17.1.30
+env DISCOURSE_DB_USERNAME postgres
 
 RUN \
   apt-get update && \
-  apt-get -y install nodejs software-properties-common build-essential unzip
-
-# Install ruby2.2 from brightbox ppa
-RUN \
-  apt-add-repository ppa:brightbox/ruby-ng && \
-  apt-get update && apt-get install -y ruby2.2 ruby2.2-dev
-
+  apt-get -y install nodejs build-essential curl unzip
 
 # Download discourse
 RUN \
   cd /tmp && \
   curl -sSL "https://github.com/discourse/discourse/archive/latest-release.zip" -o discourse.zip && \
-  unzip discourse.zip -d /srv/discourse && \
+  unzip discourse.zip -d /srv && \
+  mv /srv/discourse-latest-release /srv/discourse &&\
   rm -f discourse.zip && \
   echo "unzip completed"
+
+WORKDIR /srv/discourse
 
 # Install bundler
 RUN \
@@ -31,49 +34,36 @@ RUN \
 RUN \
   apt-get install -y libpq++-dev git-core imagemagick
 
-WORKDIR /srv/discourse
-
 # Install gems
 RUN \
-  bundle install -j4 --without development test
-
-# # Copy source code
-# ADD . /srv/discourse
-WORKDIR /srv/discourse
+  bundle install --deployment -j4 --without development test
 
 # Compile assets
 RUN \
- RAILS_ENV=production bundle exec rake assets:precompile
+ bundle exec rake db:create db:migrate
 
+# Compile assets
+RUN \
+ bundle exec rake assets:precompile
 
 RUN \
   chown -R www-data:www-data /srv/discourse
 
-# Install Phision Passenger PGP key and add HTTPS support for APT
-RUN \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
-RUN \
-  apt-get install -y apt-transport-https ca-certificates
-
-# Add our APT repository
-RUN \
-  sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list'
-RUN \
-  apt-get update
-
-# Install Passenger + Nginx
-RUN \
-  apt-get install -y nginx-extras passenger && \
-  service nginx stop
+RUN mkdir -p /var/nginx/cache
+RUN chown -R www-data:www-data /var/nginx/cache
 
 RUN \
   rm /etc/nginx/sites-enabled/default
 
-ADD nginx.conf /etc/nginx/nginx.conf
 ADD discourse.conf /etc/nginx/sites-enabled/discourse.conf
-ADD postgres-env.conf /etc/nginx/main.d/postgres-env.conf
+ADD discourse-env.conf /etc/nginx/main.d/discourse-env.conf
 
 EXPOSE 80
+
+VOLUME "/srv/discourse/public/uploads"
+VOLUME "/srv/discourse/logs"
+
+USER www-data
 
 RUN \
   apt-get clean
