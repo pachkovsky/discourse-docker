@@ -8,4 +8,4 @@ sidekiq:
     - "build_redis:redis"
     - "build_postgres:postgres"
   volumes_from:
-    - discourse
+    - discourse-web

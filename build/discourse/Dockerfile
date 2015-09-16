@@ -10,8 +10,8 @@ env RUBY_GC_MALLOC_LIMIT 90000000
 env DISCOURSE_DB_HOST     postgres
 env DISCOURSE_REDIS_HOST  redis
 env DISCOURSE_DB_USERNAME postgres
-env DISCOURSE_DB_USERNAME postgres
-env GIT_PATH https://github.com/discourse/discourse/tree/v1.3.5
+env GIT_PATH   https://github.com/discourse/discourse/tree/v1.3.5
+env GIT_BRANCH 1.3.5
 
 RUN \
   apt-get update && \
@@ -20,7 +20,7 @@ RUN \
 # Download discourse
 RUN \
   cd /tmp && \
-  git clone $GIT_PATH /srv/discourse
+  git clone --branch $GIT_BRANCH $GIT_PATH /srv/discourse
 
 WORKDIR /srv/discourse
 
