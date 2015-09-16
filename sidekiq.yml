@@ -1,5 +1,5 @@
 sidekiq:
-  image: discourse
+  image: pachkovskij/discourse
   container_name: discourse-sidekiq
   env_file:
     - .env

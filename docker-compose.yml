@@ -1,5 +1,5 @@
 discourse:
-  image: discourse
+  image: pachkovskij/discourse
   container_name: discourse-web
   env_file:
     - .env

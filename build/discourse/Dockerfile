@@ -11,7 +11,7 @@ env DISCOURSE_DB_HOST     postgres
 env DISCOURSE_REDIS_HOST  redis
 env DISCOURSE_DB_USERNAME postgres
 env GIT_PATH   https://github.com/discourse/discourse.git
-env GIT_BRANCH v1.3.5
+env GIT_BRANCH master
 
 RUN \
   apt-get update && \
