@@ -4,20 +4,9 @@ discourse:
   env_file:
     - .env
   ports:
-    - "8081:80"
+    - "80:80"
   external_links:
-    - build_redis
-    - build_postgres
-  restart: always
-
-sidekiq:
-  image: discourse
-  container_name: discourse-sidekiq
-  env_file:
-    - .env
-  command: bundle exec sidekiq
-  external_links:
-    - build_redis
-    - build_postgres
-  volumes_from:
-    - discourse
+    - "build_redis:redis"
+    - "build_postgres:postgres"
+  volumes:
+    - ./uploads:/srv/discourse/public/uploads

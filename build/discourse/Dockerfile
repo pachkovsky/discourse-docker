@@ -10,6 +10,8 @@ env RUBY_GC_MALLOC_LIMIT 90000000
 env DISCOURSE_DB_HOST     postgres
 env DISCOURSE_REDIS_HOST  redis
 env DISCOURSE_DB_USERNAME postgres
+env DISCOURSE_DB_USERNAME postgres
+env GIT_PATH https://github.com/discourse/discourse/tree/v1.3.5
 
 RUN \
   apt-get update && \
@@ -18,7 +20,7 @@ RUN \
 # Download discourse
 RUN \
   cd /tmp && \
-  git clone https://github.com/discourse/discourse.git /srv/discourse
+  git clone $GIT_PATH /srv/discourse
 
 WORKDIR /srv/discourse
 
@@ -28,7 +30,7 @@ RUN \
 
 # Install Discourse dependencies
 RUN \
-  apt-get install -y libpq++-dev git-core imagemagick
+  apt-get install -y libpq++-dev git-core imagemagick postgresql-client-9.3
 
 # Install gems
 RUN \
